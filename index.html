@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>그래도 웃음이 필요하다</title>
+	<link href="https://fonts.cdnfonts.com/css/helvetica-lt-narrow" rel="stylesheet">
+	<script defer src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+
+
+	<style>
+		body {
+		  margin: 0;
+		  overflow: hidden;
+		  background: black;
+		  transition: background-color 1.5s ease;
+		}
+
+		video {
+		  position: absolute;
+		  top: 0;
+		  left: 0;
+		  width: 100vw;
+		  height: 100vh;
+		  object-fit: cover;
+		  z-index: 1;
+		  filter: none;
+		  transition: filter 0.1s ease-in-out; 
+		}
+
+		.overlay {
+		  position: absolute;
+		  top: 0;
+		  left: 0;
+		  width: 100vw;
+		  height: 100vh;
+		  display: flex;
+		  justify-content: center;
+		  align-items: center;
+		  z-index: 2;
+		}
+
+.overlay h2 {
+  font-size: 20rem;
+  color: yellow;
+  text-align: center;
+  transform: scale(1, 1.8);
+}
+
+.english-text {
+  font-family: 'Helvetica LT Narrow', sans-serif;
+}
+
+@font-face {
+    font-family: 'D2Coding';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_three@1.0/D2Coding.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.hidden {display: none !important;}
+
+		.p-text {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			color: white;
+			font-size: 1.4rem;
+			text-align: center;
+			line-height: 1.5;
+			font-family: 'D2Coding', sans-serif; 
+			display: none; 
+			white-space: nowrap;
+		}
+
+		@font-face {
+    font-family: 'Pretendard-Medium';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+}
+
+/* 버튼 초기 상태 숨기기 */
+.button-container, .completed-button {
+  opacity: 0; /* 초기 숨김 상태 */
+  transition: opacity 1.5s ease; /* 서서히 나타나도록 전환 */
+}
+
+.button-container.visible, .completed-button.visible {
+  opacity: 1; /* visible 클래스가 추가되면 완전히 표시 */
+}
+
+    .button-container {
+      display: flex;
+  justify-content: space-between; /* emotion-buttons와 completed-button 사이 간격 균등 분배 */
+  align-items: center; /* 버튼 수직 가운데 정렬 */
+  margin: 0 auto; /* 컨테이너를 화면 가운데 정렬 */
+  padding: 0 10px; /* 좌우 패딩 추가 */
+  width: calc(100% - 20px); /* 패딩을 제외한 컨테이너 너비 */
+  box-sizing: border-box; /* 패딩/테두리를 width에 포함 */
+    }
+
+    .emotion-button {
+      font-family: 'Helvetica LT Narrow', sans-serif; /* 영문 폰트 */
+      font-size: 1.7rem;
+      font-weight: medium;
+      text-align: center;
+      padding: 5px 12px;
+      background-color: #D8D8D8; /* 기본 흰색 배경 */
+      color: black; /* 텍스트 색상 */
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .emotion-button:hover {
+      background-color: yellow; /* 호버 시 배경 검정색 */
+      color: black; /* 텍스트 흰색 */
+    }
+
+    .completed-button {
+      font-family: 'Pretendard', sans-serif; /* 한글은 Pretendard */
+      font-size: 1.7rem;
+      font-weight: medium;
+      text-align: center;
+      padding: 5px 12px;
+      background-color: #D8D8D8; 
+      color: black; 
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+      border: none;
+      white-space: nowrap;
+    }
+
+    .completed-button:hover {
+      background-color: yellow; /* 호버 시 배경 노란색 */
+      color: black; /* 텍스트 검정색 */
+    }
+
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 1.5s ease, visibility 1.5s ease;
+}
+
+/* 표시 상태 */
+.visible {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+    .content-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 왼쪽 정렬 */
+  margin: 20px 0 0 20px; /* 화면 왼쪽 상단 여백 */
+}
+
+.instruction-text {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 1.5rem;
+  font-weight: Medium;
+  color: black;
+  margin-bottom: 10px;
+  background-color: yellow;
+  padding: 5px 12px;
+  border:none
+}
+
+.custom-image-box {
+	position: absolute;
+  width: 300px;
+  height: 400px;
+  background-color: #D8D8D8;
+  border: 2px solid black; /* 박스 테두리 항상 표시 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+   z-index: 2;
+}
+
+.custom-image-box img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: none; /* 기본적으로 이미지는 숨김 */
+  transition: opacity 0.5s ease; /* 이미지 등장 애니메이션 */
+}
+
+.custom-image-box img.visible {
+  display: block; /* HAPPY 버튼을 눌렀을 때 이미지를 표시 */
+  opacity: 1;
+}
+
+.webcam-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%; /* 화면 너비의 80% */
+  height: 68%; /* 화면 높이의 60% */
+  background-color: #D8D8D8; /* 박스 배경색 */
+  border: 2px solid black; /* 테두리 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0; /* 초기 상태에서 숨김 */
+  visibility: hidden; /* 화면에서 제거 */
+  transition: opacity 1.5s ease, visibility 1.5s ease;
+   z-index: 1;
+}
+
+
+.webcam-container.visible {
+  opacity: 1; /* 보이도록 전환 */
+  visibility: visible;
+}
+
+/* 웹캠 화면 */
+#webcam {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 화면을 박스에 맞춤 */
+  transform: scaleX(-1);
+}
+
+.face-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      height: 68%;
+      pointer-events: none; /* 캔버스는 클릭 비활성화 */
+    }
+
+	</style>
+</head>
+<body>
+<video id="video-player" autoplay muted>
+	
+</video>
+  <div class="overlay english-text">
+    <h2>No Smile City</h2>
+  </div>
+  <p class="p-text">웃음이 사라진 2428년<br><font color="gray">2428 years when laughter disappeared</font></p>
+
+  <div class="button-container">
+  <div class="emotion-buttons">
+    <button class="emotion-button">HAPPY</button>
+    <button class="emotion-button">ANGRY</button>
+    <button class="emotion-button">SAD</button>
+    <button class="emotion-button">SURPRISED</button>
+    <button class="emotion-button">DISGUSTING</button>
+  </div>
+  <button class="completed-button">수강완료!</button>
+</div>
+
+<div class="content-container hidden">
+  <div class="instruction-text">
+    예시 이미지를 따라해보세요
+  </div>
+  <div class="image-box">
+    <div class="custom-image-box">
+  <img src="smile.png" alt="예시 이미지">
+</div>
+  </div>
+</div>
+
+<div class="webcam-container">
+  <video id="webcam" autoplay muted></video>
+</div>
+  <script type="text/javascript">
+	
+	const videoFiles = ["video1.mp4", "video2.mp4", "video3.mp4"];
+
+	
+	let currentVideoIndex = 0;
+
+	
+	const videoPlayer = document.getElementById("video-player");
+	const overlay = document.querySelector(".overlay");
+	const pText = document.querySelector(".p-text");
+	const audio = new Audio("entity.mp3");
+	audio.loop = true; 
+
+	
+	let clickCount = 0;
+
+	// 동영상을 5초 간격으로 전환하는 함수
+function playNextVideo() {
+  // 현재 동영상 설정
+  videoPlayer.src = videoFiles[currentVideoIndex];
+  videoPlayer.play();
+
+  // 5초 후에 다음 동영상으로 전환
+  setTimeout(() => {
+    currentVideoIndex = (currentVideoIndex + 1) % videoFiles.length; // 다음 동영상 인덱스 계산
+    playNextVideo(); // 재귀 호출로 다음 동영상 재생
+  }, 3000); // 5000ms = 5초
+}
+
+// DOMContentLoaded 이벤트를 사용하여 HTML 파싱 후 JavaScript 실행
+document.addEventListener("DOMContentLoaded", () => {
+  playNextVideo(); // 첫 번째 동영상 재생 시작
+});
+
+
+	// 커서 움직임에 따른 필터 효과 추가
+	document.addEventListener("mousemove", () => {
+		// 비디오에 랜덤 필터 효과 적용
+		const randomBlur = Math.random() * 5; // 0~5px 사이의 블러 효과
+		const randomContrast = Math.random() * 2 + 1; // 1~3배 사이의 대비
+		const randomOpacity = Math.random() * 0.5 + 0.5; // 50%~100% 투명도
+
+		videoPlayer.style.filter = `blur(${randomBlur}px) contrast(${randomContrast}) opacity(${randomOpacity})`;
+	});
+
+
+
+	// 마우스가 화면을 벗어나면 필터 초기화
+	document.addEventListener("mouseout", () => {
+		videoPlayer.style.filter = "none"; 
+	});
+
+	function typeEffect(message, index = 0) {
+  if (index === 0) {
+    pText.innerHTML = "";
+  }
+
+  if (index < message.length) {
+    pText.innerHTML = message.substring(0, index + 1);
+
+
+    setTimeout(() => typeEffect(message, index + 1), 50);
+  }
+}
+
+
+document.addEventListener("click", () => {
+  if (clickCount === 0) {
+    // 처음 클릭 시 동영상 및 h2 숨기기
+    videoPlayer.classList.add("hidden");
+    overlay.classList.add("hidden");
+    pText.style.display = "block";
+
+
+			audio.play();
+
+    typeEffect(`웃음이 사라진 2428년<br><font color="gray">2428 years when laughter disappeared</font>`);
+  } else if (clickCount === 1) {
+    typeEffect(
+      `감정표현은 타인을 피로하게 함에 따라 부가가치세를 납부해야 하는 행위가 되었다.<br><font color="gray">Expressing emotions has become an act of paying VAT as it makes others tired.</font>`
+    );
+  } else if (clickCount === 2) {
+    typeEffect(
+      `돈이 없는 자에게 감정은 부산물이 되었고<br><font color="gray">Emotions have become a byproduct for those who don't have money</font>`
+    );
+  } else if (clickCount === 3) {
+    typeEffect(
+      `돈이 있는 자는 감정 교육을 받게 된다.<br><font color="gray">Those who have money will receive emotional education.</font>`
+    );
+  } else if (clickCount === 4) {
+    typeEffect(
+      `당신은 거액을 들여 교육을 1회 받기로 결정했다.<br><font color="gray">You decided to spend a lot of money on one training session.</font>`
+    );
+  } else if (clickCount === 5) {
+    typeEffect(
+      `예시 사진의 표정을 따라해보고 맞게 표현했는지 확인해보자.<br><font color="gray">Let's copy the expression in the example picture and see if it's expressed correctly.</font>`
+    );
+  } else if (clickCount === 6) {
+  // 글을 서서히 숨기기
+  pText.style.transition = "opacity 1.5s ease";
+  pText.style.opacity = "0";
+
+  setTimeout(() => {
+    // 글 숨기기 완료 후 display: none 처리
+    pText.style.display = "none";
+
+    // 배경색 전환
+    document.body.style.transition = "background-color 1.5s ease";
+    document.body.style.backgroundColor = "#D8D8D8";
+
+    // 콘텐츠 및 버튼 표시
+    const content = document.querySelector(".content-container");
+    content.classList.remove("hidden");
+    content.classList.add("visible");
+
+    const buttons = document.querySelector(".button-container");
+    const completedButton = document.querySelector(".completed-button");
+    buttons.classList.add("visible");
+    completedButton.classList.add("visible");
+
+    // 웹캠 컨테이너 표시
+    const webcamContainer = document.querySelector(".webcam-container");
+    webcamContainer.classList.remove("hidden");
+    webcamContainer.classList.add("visible");
+
+    // HAPPY 버튼 클릭 시 이미지 표시
+    document.querySelector(".emotion-button:nth-child(1)").addEventListener("click", () => {
+      const smileImage = document.querySelector(".custom-image-box img");
+      smileImage.classList.add("visible"); // 이미지를 표시
+    });
+
+    // 웹캠 활성화
+    const webcamElement = document.getElementById("webcam");
+    navigator.mediaDevices
+      .getUserMedia({ video: true })
+      .then((stream) => {
+        webcamElement.srcObject = stream; // 웹캠 스트림을 비디오 요소에 연결
+      })
+      .catch((err) => {
+        console.error("웹캠에 접근할 수 없습니다:", err);
+      });
+  }, 1500); // 글자가 사라진 후 실행
+}
+
+clickCount++;
+
+});
+
+
+</script>
+</body>
+</html>
