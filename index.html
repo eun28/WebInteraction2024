@@ -18,7 +18,10 @@
         background: black;
         transition: background-color 1.5s ease;
       }
-
+      canvas {
+        /* transform: scaleX(-1); */
+        z-index: 3;
+      }
       video {
         position: absolute;
         top: 0;
@@ -280,7 +283,7 @@
     </div>
 
     <div class="webcam-container">
-      <video id="webcam" autoplay muted></video>
+      <video id="webcam" width="720" height="560" autoplay muted></video>
     </div>
     <script type="text/javascript">
       const videoFiles = ["video1.mp4", "video2.mp4", "video3.mp4"];
@@ -377,6 +380,37 @@
           pText.style.transition = "opacity 1.5s ease";
           pText.style.opacity = "0";
 
+          // 영어 감정을 한국어로 매핑하는 테이블
+          const emotionMapping = {
+            neutral: "중립",
+            happy: "행복",
+            sad: "슬픔",
+            angry: "분노",
+            fearful: "공포",
+            disgusted: "혐오",
+            surprised: "놀람",
+          };
+
+          /**
+           * 감정을 한국어로 변환하는 함수
+           * @param {Object[]} detections - faceapi의 감정 분석 결과
+           * @returns {Object[]} 변환된 결과 배열
+           */
+          function mapExpressionsToKorean(detections) {
+            const mappedExpressions = {};
+
+            // 영어 감정을 한국어로 변환
+            for (const detection of detections) {
+              const expressions = detection.expressions;
+              for (const [emotion, value] of Object.entries(expressions)) {
+                const koreanEmotion = emotionMapping[emotion] || emotion; // 매핑이 없으면 기본값 유지
+                mappedExpressions[koreanEmotion] = value.toFixed(2);
+              }
+            }
+
+            return mappedExpressions;
+          }
+
           setTimeout(() => {
             // 글 숨기기 완료 후 display: none 처리
             pText.style.display = "none";
@@ -395,43 +429,6 @@
             buttons.classList.add("visible");
             completedButton.classList.add("visible");
 
-            /*
-            const video = document.getElementById("video");
-
-            Promise.all([
-              faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
-              faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
-              faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
-              faceapi.nets.faceExpressionNet.loadFromUri("/models"),
-            ]).then(startVideo);
-
-            function startVideo() {
-              navigator.getUserMedia(
-                { video: {} },
-                (stream) => (video.srcObject = stream),
-                (err) => console.error(err)
-              );
-            }
-
-            video.addEventListener("play", () => {
-              const canvas = faceapi.createCanvasFromMedia(video);
-              document.body.append(canvas);
-              const displaySize = { width: video.width, height: video.height };
-              faceapi.matchDimensions(canvas, displaySize);
-              setInterval(async () => {
-                const detections = await faceapi
-                  .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
-                  .withFaceLandmarks()
-                  .withFaceExpressions();
-                console.log(detections);
-                const resizedDetections = faceapi.resizeResults(detections, displaySize);
-                canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-                // faceapi.draw.drawDetections(canvas, resizedDetections)
-                // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
-                faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
-              }, 100);
-            });
-            */
             // 웹캠 컨테이너 표시
             const webcamContainer = document.querySelector(".webcam-container");
             webcamContainer.classList.remove("hidden");
@@ -454,28 +451,43 @@
                 (err) => console.error(err)
               );
             }
+            function adjustCanvasSize() {
+              const container = document.getElementById("webcamContainer");
 
+              // container의 크기를 가져와 canvas 크기를 조정
+              const { webcamContainerWidth, webcamContainerHeight } =
+                container.getBoundingClientRect();
+              canvas.width = webcamContainerWidth;
+              canvas.height = webcamContainerHeight;
+            }
+
+            window.addEventListener("resize", adjustCanvasSize);
             video.addEventListener("play", () => {
               const canvas = faceapi.createCanvasFromMedia(video);
-              document.body.append(canvas);
-              const displaySize = { width: video.width, height: video.height };
+              webcamContainer.append(canvas);
+              const displaySize = {
+                width: video.width,
+                height: video.height,
+              };
               faceapi.matchDimensions(canvas, displaySize);
               setInterval(async () => {
                 const detections = await faceapi
                   .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
                   .withFaceLandmarks()
                   .withFaceExpressions();
-                console.log(detections);
+
                 const resizedDetections = faceapi.resizeResults(
                   detections,
                   displaySize
                 );
+
                 canvas
                   .getContext("2d")
-                  .clearRect(0, 0, canvas.width, canvas.height);
-                // faceapi.draw.drawDetections(canvas, resizedDetections)
-                // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
-                faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+                  .clearRect(0, 0, video.width, video.height);
+                faceapi.draw.drawDetections(canvas, resizedDetections);
+                // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+                // faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+                resultExpressions = mapExpressionsToKorean(detections);
               }, 100);
             });
 
