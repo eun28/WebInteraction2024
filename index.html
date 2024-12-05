@@ -486,7 +486,7 @@
                   .clearRect(0, 0, video.width, video.height);
                 faceapi.draw.drawDetections(canvas, resizedDetections);
                 // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
-                // faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+                faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
                 resultExpressions = mapExpressionsToKorean(detections);
               }, 100);
             });
