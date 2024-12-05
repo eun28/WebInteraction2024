@@ -286,11 +286,7 @@
       <video id="webcam" width="720" height="560" autoplay muted></video>
     </div>
     <script type="text/javascript">
-      const videoFiles = [
-        "./WebInteraction2024/video1.mp4",
-        "video2.mp4",
-        "https://eun28.github.io/WebInteraction2024/video3.mp4",
-      ];
+      const videoFiles = ["./video1.mp4", "./video2.mp4", "./video3.mp4"];
 
       let currentVideoIndex = 0;
 
@@ -442,18 +438,10 @@
             const video = document.getElementById("webcam");
 
             Promise.all([
-              faceapi.nets.tinyFaceDetector.loadFromUri(
-                "./WebInteraction2024/models"
-              ),
-              faceapi.nets.faceLandmark68Net.loadFromUri(
-                "./WebInteraction2024/models"
-              ),
-              faceapi.nets.faceRecognitionNet.loadFromUri(
-                "./WebInteraction2024/models"
-              ),
-              faceapi.nets.faceExpressionNet.loadFromUri(
-                "./WebInteraction2024/models"
-              ),
+              faceapi.nets.tinyFaceDetector.loadFromUri("./models"),
+              faceapi.nets.faceLandmark68Net.loadFromUri("./models"),
+              faceapi.nets.faceRecognitionNet.loadFromUri("./models"),
+              faceapi.nets.faceExpressionNet.loadFromUri("./models"),
             ]).then(startVideo);
 
             function startVideo() {
