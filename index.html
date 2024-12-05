@@ -319,15 +319,6 @@
           videoPlayer.play();
           playNextVideo(); // 재귀 호출로 다음 동영상 재생
         }, 3000); // 5000ms = 5초
-        // 현재 동영상 설정
-        videoPlayer.src = videoFiles[currentVideoIndex];
-        videoPlayer.play();
-
-        // 5초 후에 다음 동영상으로 전환
-        setTimeout(() => {
-          currentVideoIndex = (currentVideoIndex + 1) % videoFiles.length; // 다음 동영상 인덱스 계산
-          playNextVideo(); // 재귀 호출로 다음 동영상 재생
-        }, 3000); // 5000ms = 5초
       }
 
       // DOMContentLoaded 이벤트를 사용하여 HTML 파싱 후 JavaScript 실행
