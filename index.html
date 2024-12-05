@@ -439,16 +439,16 @@
 
             Promise.all([
               faceapi.nets.tinyFaceDetector.loadFromUri(
-                "https://github.com/eun28/WebInteraction2024/tree/main/models"
+                "https://eun28.github.io/WebInteraction2024/models"
               ),
               faceapi.nets.faceLandmark68Net.loadFromUri(
-                "https://github.com/eun28/WebInteraction2024/tree/main/models"
+                "https://eun28.github.io/WebInteraction2024/models"
               ),
               faceapi.nets.faceRecognitionNet.loadFromUri(
-                "https://github.com/eun28/WebInteraction2024/tree/main/models"
+                "https://eun28.github.io/WebInteraction2024/models"
               ),
               faceapi.nets.faceExpressionNet.loadFromUri(
-                "https://github.com/eun28/WebInteraction2024/tree/main/models"
+                "https://eun28.github.io/WebInteraction2024/models"
               ),
             ]).then(startVideo);
 
