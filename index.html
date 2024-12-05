@@ -300,6 +300,25 @@
 
       // 동영상을 5초 간격으로 전환하는 함수
       function playNextVideo() {
+        // 비디오 파일을 미리 로드
+        const preloadedVideos = videoFiles.map((file) => {
+          const video = document.createElement("video");
+          video.src = file;
+          video.preload = "auto";
+          return video;
+        });
+
+        // 현재 동영상 설정
+        videoPlayer.src = preloadedVideos[currentVideoIndex].src;
+        videoPlayer.play();
+
+        // 5초 후에 다음 동영상으로 전환
+        setTimeout(() => {
+          currentVideoIndex = (currentVideoIndex + 1) % preloadedVideos.length; // 다음 동영상 인덱스 계산
+          videoPlayer.src = preloadedVideos[currentVideoIndex].src;
+          videoPlayer.play();
+          playNextVideo(); // 재귀 호출로 다음 동영상 재생
+        }, 3000); // 5000ms = 5초
         // 현재 동영상 설정
         videoPlayer.src = videoFiles[currentVideoIndex];
         videoPlayer.play();
