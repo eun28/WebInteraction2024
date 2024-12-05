@@ -286,7 +286,11 @@
       <video id="webcam" width="720" height="560" autoplay muted></video>
     </div>
     <script type="text/javascript">
-      const videoFiles = ["video1.mp4", "video2.mp4", "video3.mp4"];
+      const videoFiles = [
+        "https://eun28.github.io/WebInteraction2024/video1.mp4",
+        "https://eun28.github.io/WebInteraction2024/video2.mp4",
+        "https://eun28.github.io/WebInteraction2024/video3.mp4",
+      ];
 
       let currentVideoIndex = 0;
 
@@ -438,10 +442,10 @@
             const video = document.getElementById("webcam");
 
             Promise.all([
-              faceapi.nets.tinyFaceDetector.loadFromUri("./models"),
-              faceapi.nets.faceLandmark68Net.loadFromUri("./models"),
-              faceapi.nets.faceRecognitionNet.loadFromUri("./models"),
-              faceapi.nets.faceExpressionNet.loadFromUri("./models"),
+              faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
+              faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
+              faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
+              faceapi.nets.faceExpressionNet.loadFromUri("/models"),
             ]).then(startVideo);
 
             function startVideo() {
@@ -486,7 +490,7 @@
                   .clearRect(0, 0, video.width, video.height);
                 faceapi.draw.drawDetections(canvas, resizedDetections);
                 // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
-                // faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+                faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
                 resultExpressions = mapExpressionsToKorean(detections);
               }, 100);
             });
