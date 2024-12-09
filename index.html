@@ -198,7 +198,7 @@
 
       .custom-image-box img {
         width: 100%;
-        height: auto;
+        height: 100%;
         object-fit: cover;
         display: none; /* 기본적으로 이미지는 숨김 */
         transition: opacity 0.5s ease; /* 이미지 등장 애니메이션 */
@@ -278,6 +278,10 @@
       <div class="image-box">
         <div class="custom-image-box">
           <img src="smile.png" alt="예시 이미지" />
+          <img src="angry.png" alt="예시 이미지" />
+          <img src="sad.png" alt="예시 이미지" />
+          <img src="surprised.png" alt="예시 이미지" />
+          <img src="disgusting.png" alt="예시 이미지" />
         </div>
       </div>
     </div>
@@ -285,6 +289,10 @@
     <div class="webcam-container">
       <video id="webcam" width="720" height="560" autoplay muted></video>
     </div>
+<div id="emotion-output" style="position: absolute; bottom: 20px; right: 20px; background: #d8d8d8; padding: 0px 20px; font-family: Pretendard, sans-serif; border: 2px solid black; font-size: 1.5rem; z-index: 2;display: none; ">
+  <!-- 감정 데이터가 실시간으로 여기에 표시됩니다 -->
+</div>
+
     <script type="text/javascript">
       const videoFiles = ["video1.mp4", "video2.mp4", "video3.mp4"];
 
@@ -382,35 +390,39 @@
 
           // 영어 감정을 한국어로 매핑하는 테이블
           const emotionMapping = {
-            neutral: "중립",
-            happy: "행복",
+            neutral: "협조적인 태도",
+            happy: "억지웃음",
             sad: "슬픔",
             angry: "분노",
-            fearful: "공포",
-            disgusted: "혐오",
+            fearful: "???",
+            disgusted: "역겨운",
             surprised: "놀람",
           };
 
-          /**
-           * 감정을 한국어로 변환하는 함수
-           * @param {Object[]} detections - faceapi의 감정 분석 결과
-           * @returns {Object[]} 변환된 결과 배열
-           */
           function mapExpressionsToKorean(detections) {
-            const mappedExpressions = {};
+  const mappedExpressions = {};
 
-            // 영어 감정을 한국어로 변환
-            for (const detection of detections) {
-              const expressions = detection.expressions;
-              for (const [emotion, value] of Object.entries(expressions)) {
-                const koreanEmotion = emotionMapping[emotion] || emotion; // 매핑이 없으면 기본값 유지
-                mappedExpressions[koreanEmotion] = value.toFixed(2);
-              }
-            }
+  for (const detection of detections) {
+    const expressions = detection.expressions;
+    for (const [emotion, value] of Object.entries(expressions)) {
+      const koreanEmotion = emotionMapping[emotion] || emotion;
+      mappedExpressions[koreanEmotion] = value.toFixed(2);
+    }
+  }
 
-            return mappedExpressions;
-          }
+  return mappedExpressions;
+}
 
+// 감정 결과를 화면에 표시하는 함수
+  function displayMappedExpressions(mappedExpressions) {
+    const outputElement = document.getElementById("emotion-output");
+    outputElement.innerHTML = ""; // 기존 데이터 초기화
+
+    for (const [emotion, value] of Object.entries(mappedExpressions)) {
+      const emotionText = `<p>${emotion}: ${value}</p>`;
+      outputElement.innerHTML += emotionText; // 감정 데이터 추가
+    }
+  }
           setTimeout(() => {
             // 글 숨기기 완료 후 display: none 처리
             pText.style.display = "none";
@@ -434,76 +446,114 @@
             webcamContainer.classList.remove("hidden");
             webcamContainer.classList.add("visible");
 
-            // 웹캠 활성화
-            const video = document.getElementById("webcam");
+            // 감정 데이터 출력 활성화
+      const emotionOutput = document.getElementById("emotion-output");
+      emotionOutput.style.display = "block"; // 감정 데이터를 표시
 
-            Promise.all([
-              faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
-              faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
-              faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
-              faceapi.nets.faceExpressionNet.loadFromUri("/models"),
-            ]).then(startVideo);
-
-            function startVideo() {
-              navigator.getUserMedia(
-                { video: {} },
-                (stream) => (video.srcObject = stream),
-                (err) => console.error(err)
-              );
-            }
-            function adjustCanvasSize() {
-              const container = document.getElementById("webcamContainer");
-
-              // container의 크기를 가져와 canvas 크기를 조정
-              const { webcamContainerWidth, webcamContainerHeight } =
-                container.getBoundingClientRect();
-              canvas.width = webcamContainerWidth;
-              canvas.height = webcamContainerHeight;
-            }
-
-            window.addEventListener("resize", adjustCanvasSize);
-            video.addEventListener("play", () => {
-              const canvas = faceapi.createCanvasFromMedia(video);
-              webcamContainer.append(canvas);
-              const displaySize = {
-                width: video.width,
-                height: video.height,
-              };
-              faceapi.matchDimensions(canvas, displaySize);
-              setInterval(async () => {
-                const detections = await faceapi
-                  .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
-                  .withFaceLandmarks()
-                  .withFaceExpressions();
-
-                const resizedDetections = faceapi.resizeResults(
-                  detections,
-                  displaySize
-                );
-
-                canvas
-                  .getContext("2d")
-                  .clearRect(0, 0, video.width, video.height);
-                faceapi.draw.drawDetections(canvas, resizedDetections);
-                // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
-                faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
-                resultExpressions = mapExpressionsToKorean(detections);
-              }, 100);
-            });
 
             // HAPPY 버튼 클릭 시 이미지 표시
-            document
-              .querySelector(".emotion-button:nth-child(1)")
-              .addEventListener("click", () => {
-                const smileImage = document.querySelector(
-                  ".custom-image-box img"
-                );
-                smileImage.classList.add("visible"); // 이미지를 표시
-              });
-          }, 1500); // 글자가 사라진 후 실행
+        document
+          .querySelector(".emotion-button:nth-child(1)") // HAPPY 버튼 선택
+          .addEventListener("click", () => {
+            const smileImage = document.querySelector(".custom-image-box img");
+            smileImage.src = "smile.png"; // HAPPY 이미지 경로
+            smileImage.classList.add("visible"); // 이미지를 표시
+          });
+
+        // ANGRY 버튼 클릭 시 이미지 표시
+        document
+          .querySelector(".emotion-button:nth-child(2)") // ANGRY 버튼 선택
+          .addEventListener("click", () => {
+            const angryImage = document.querySelector(".custom-image-box img");
+            angryImage.src = "angry.png"; // ANGRY 이미지 경로
+            angryImage.classList.add("visible"); // 이미지를 표시
+          });
+
+          // SAD 버튼 클릭 시 이미지 표시
+        document
+          .querySelector(".emotion-button:nth-child(3)") // SAD 버튼 선택
+          .addEventListener("click", () => {
+            const sadImage = document.querySelector(".custom-image-box img");
+            sadImage.src = "sad.png"; // SAD 이미지 경로
+            sadImage.classList.add("visible"); // 이미지를 표시
+          });
+          // Surprised 버튼 클릭 시 이미지 표시
+        document
+          .querySelector(".emotion-button:nth-child(4)") 
+          .addEventListener("click", () => {
+            const surprisedImage = document.querySelector(".custom-image-box img");
+            surprisedImage.src = "surprised.png";
+            surprisedImage.classList.add("visible"); // 이미지를 표시
+          });
+          // disgusting 버튼 클릭 시 이미지 표시
+        document
+          .querySelector(".emotion-button:nth-child(5)") 
+          .addEventListener("click", () => {
+            const disgustingImage = document.querySelector(".custom-image-box img");
+            disgustingImage.src = "disgusting.png";
+            disgustingImage.classList.add("visible"); // 이미지를 표시
+          });
+
+        // 웹캠 활성화
+        const video = document.getElementById("webcam");
+
+        Promise.all([
+          faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
+          faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
+          faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
+          faceapi.nets.faceExpressionNet.loadFromUri("/models"),
+        ]).then(startVideo);
+
+        function startVideo() {
+          navigator.getUserMedia(
+            { video: {} },
+            (stream) => (video.srcObject = stream),
+            (err) => console.error(err)
+          );
+        }
+        function adjustCanvasSize() {
+          const container = document.getElementById("webcamContainer");
+
+          // container의 크기를 가져와 canvas 크기를 조정
+          const { webcamContainerWidth, webcamContainerHeight } =
+            container.getBoundingClientRect();
+          canvas.width = webcamContainerWidth;
+          canvas.height = webcamContainerHeight;
         }
 
-        clickCount++;
+        window.addEventListener("resize", adjustCanvasSize);
+        video.addEventListener("play", () => {
+          const canvas = faceapi.createCanvasFromMedia(video);
+          webcamContainer.append(canvas);
+          const displaySize = {
+            width: video.width,
+            height: video.height,
+          };
+          faceapi.matchDimensions(canvas, displaySize);
+          setInterval(async () => {
+            const detections = await faceapi
+              .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+              .withFaceLandmarks()
+              .withFaceExpressions();
+
+            const resizedDetections = faceapi.resizeResults(
+              detections,
+              displaySize
+            );
+
+            canvas
+              .getContext("2d")
+              .clearRect(0, 0, video.width, video.height);
+            faceapi.draw.drawDetections(canvas, resizedDetections);
+            faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+          // 감정을 한국어로 변환하여 화면에 표시
+          const mappedExpressions = mapExpressionsToKorean(detections);
+          displayMappedExpressions(mappedExpressions);
+          }, 100);
+        });
+      }, 1500);
+    }
+     clickCount++;
       });
     </script>
   </body>
