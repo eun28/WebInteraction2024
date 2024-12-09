@@ -544,7 +544,7 @@
               .clearRect(0, 0, video.width, video.height);
             faceapi.draw.drawDetections(canvas, resizedDetections);
             faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
-          // 감정을 한국어로 변환하여 화면에 표시
+          
           const mappedExpressions = mapExpressionsToKorean(detections);
           displayMappedExpressions(mappedExpressions);
           }, 100);
