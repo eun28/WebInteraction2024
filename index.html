@@ -602,12 +602,12 @@
           const video = document.getElementById("webcam");
 
           // 기존 동작 (웹캠 스트림 종료 및 화면 요소 숨김 처리)
-          const stream = video.srcObject;
-          if (stream) {
-            const tracks = stream.getTracks();
-            tracks.forEach((track) => track.stop());
-            video.srcObject = null;
-          }
+          // const stream = video.srcObject;
+          // if (stream) {
+          //   const tracks = stream.getTracks();
+          //   tracks.forEach((track) => track.stop());
+          //   video.srcObject = null;
+          // }
 
           webcamContainer.classList.add("hidden");
           videoPlayer.classList.add("hidden");
