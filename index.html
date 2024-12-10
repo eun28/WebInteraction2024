@@ -712,7 +712,6 @@ restartButton.addEventListener("click", () => {
   });
 });
 
-// 웹캠 및 감정 인식 활성화 함수
 function startWebcamAndFaceDetection() {
   const video = document.getElementById("webcam");
   const webcamContainer = document.querySelector(".webcam-container");
@@ -803,7 +802,7 @@ function startWebcamAndFaceDetection() {
   });
 
 
-// 감정 데이터 매핑 및 표시 함수는 그대로 유지
+
 function mapExpressionsToKorean(detections) {
   const emotionMapping = {
     neutral: "협조적인 태도",
