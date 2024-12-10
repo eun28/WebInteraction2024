@@ -68,19 +68,16 @@
         display: none !important;
       }
 
-      .p-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        font-size: 1.4rem;
-        text-align: center;
-        line-height: 1.5;
-        font-family: "D2Coding", sans-serif;
-        display: none;
-        white-space: nowrap;
-      }
+  .p-text{position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 1.8rem; /* 텍스트 크기 조정 */
+  text-align: center;
+  font-family: "D2Coding", sans-serif;
+  display: none; /* 기본적으로 숨김 처리 */
+  z-index: 100; /* 텍스트가 위에 오도록 */}
 
       @font-face {
         font-family: "Pretendard-Medium";
@@ -291,7 +288,10 @@
   <!-- 감정 데이터가 실시간으로 여기에 표시됩니다 -->
 </div>
 
-    <script type="text/javascript">
+<div id="new-text" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 1.8rem; text-align: center; font-family: 'D2Coding', sans-serif; z-index: 101;">
+</div>
+
+<script type="text/javascript">
       const videoFiles = ["video1.mp4", "video2.mp4", "video3.mp4"];
 
       let currentVideoIndex = 0;
@@ -299,10 +299,12 @@
       const videoPlayer = document.getElementById("video-player");
       const overlay = document.querySelector(".overlay");
       const pText = document.querySelector(".p-text");
+      const newText = document.getElementById("new-text");
       const audio = new Audio("entity.mp3");
       audio.loop = true;
 
-      let clickCount = 0;
+let clickCount = 0; // 일반 클릭 횟수
+let clickStage = 0; // 클릭 상태를 관리하는 변수
 
       // 동영상을 5초 간격으로 전환하는 함수
       function playNextVideo() {
@@ -492,6 +494,7 @@
             disgustingImage.classList.add("visible"); // 이미지를 표시
           });
 
+
         // 웹캠 활성화
         const video = document.getElementById("webcam");
 
@@ -553,6 +556,230 @@
     }
      clickCount++;
       });
+
+document.querySelector(".completed-button").addEventListener("click", () => {
+  const newText = document.getElementById("new-text");
+  const webcamContainer = document.querySelector(".webcam-container");
+  const video = document.getElementById("webcam");
+
+  // 기존 동작 (웹캠 스트림 종료 및 화면 요소 숨김 처리)
+  const stream = video.srcObject;
+  if (stream) {
+    const tracks = stream.getTracks();
+    tracks.forEach((track) => track.stop());
+    video.srcObject = null;
+  }
+
+  webcamContainer.classList.add("hidden");
+  videoPlayer.classList.add("hidden");
+  overlay.classList.add("hidden");
+  document.querySelector(".button-container").classList.add("hidden");
+  document.querySelector(".content-container").classList.add("hidden");
+  document.getElementById("emotion-output").style.display = "none";
+  document.body.style.backgroundColor = "black";
+
+  // 새로운 텍스트 설정
+  setTimeout(() => {
+    // 텍스트 초기화
+    newText.style.display = "none";
+    newText.style.opacity = "0";
+    newText.innerHTML = ""; // 기존 텍스트 초기화
+
+     // 첫 번째 텍스트 표시
+    newText.innerHTML =
+      "감정 교육은 만족스러우셨나요?<br><font color='gray'>Was the emotional education satisfactory?</font>";
+    newText.style.display = "block";
+    newText.style.opacity = "1";
+    newText.style.transition = "opacity 1s ease";
+
+    // 클릭 상태를 1로 설정
+    clickStage = 1;
+  });
+
+  // 화면 클릭 이벤트
+  document.addEventListener("click", () => {
+    if (clickStage === 1) {
+      // 두 번째 텍스트 설정
+      newText.style.opacity = "0"; // 기존 텍스트 서서히 사라짐
+      setTimeout(() => {
+        newText.innerHTML =
+          "5번의 감정 표현을 하신 당신의 수강료는 78134000원 입니다. 감사합니다.<br><font color='gray'>Your tuition fee for expressing your feelings 5 times is 78134000 won. Thank you.</font>";
+     // 버튼 추가
+        // 버튼 생성
+const restartButton = document.createElement("button");
+restartButton.innerText = "다시 수강하기";
+restartButton.style.position = "absolute";
+restartButton.style.top = "calc(50% + 150px)"; // newText 아래로 100px 떨어진 위치
+restartButton.style.left = "50%";
+restartButton.style.transform = "translateX(-50%)";
+restartButton.style.padding = "10px 20px";
+restartButton.style.fontSize = "1.5rem";
+restartButton.style.backgroundColor = "yellow";
+restartButton.style.border = "none";
+restartButton.style.color = "black";
+restartButton.style.cursor = "pointer";
+restartButton.style.fontFamily = "Pretendard, sans-serif";
+restartButton.style.zIndex = "10"; // 다른 요소 위로 배치
+
+// 버튼을 문서에 추가
+document.body.appendChild(restartButton);
+restartButton.addEventListener("click", () => {
+  // 초기화 작업
+  newText.style.display = "none";
+  restartButton.remove();
+
+  document.body.style.backgroundColor = "#D8D8D8";
+  webcamContainer.classList.remove("hidden");
+  webcamContainer.classList.add("visible");
+  document.querySelector(".button-container").classList.remove("hidden");
+  document.querySelector(".button-container").classList.add("visible");
+  document.querySelector(".content-container").classList.remove("hidden");
+  document.querySelector(".content-container").classList.add("visible");
+  document.getElementById("emotion-output").style.display = "block";
+
+  // 기존 스트림 및 캔버스 초기화
+  const video = document.getElementById("webcam");
+  const canvasContainer = webcamContainer.querySelector("canvas");
+  if (canvasContainer) canvasContainer.remove(); // 기존 캔버스 제거
+  if (video.srcObject) {
+    video.srcObject.getTracks().forEach((track) => track.stop()); // 기존 스트림 중지
+    video.srcObject = null;
+  }
+
+  // 웹캠 및 감정 추적 재활성화
+  startWebcamAndFaceDetection();
+});
+
+        newText.appendChild(restartButton); // 버튼 추가
+        newText.style.opacity = "1"; // 새 텍스트 서서히 나타남
+      }, 500); // 기존 텍스트 사라진 후 새 텍스트 설정
+
+      // 클릭 상태 초기화
+      clickStage = 0;
+    }
+  });
+});
+
+// 웹캠 및 감정 인식 활성화 함수
+function startWebcamAndFaceDetection() {
+  const video = document.getElementById("webcam");
+  const webcamContainer = document.querySelector(".webcam-container");
+
+  // 모델 로드
+  Promise.all([
+    faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
+    faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
+    faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
+    faceapi.nets.faceExpressionNet.loadFromUri("/models"),
+  ])
+    .then(() => {
+      console.log("모델 로드 성공");
+
+      // 웹캠 스트림 활성화
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          video.srcObject = stream;
+          video.play();
+
+          // Ensure the video element is visible and properly sized
+          video.style.display = "block";
+          video.style.objectFit = "cover"; // 화면 비율 유지
+
+          video.addEventListener("loadeddata", () => {
+            console.log("웹캠 데이터 로드 성공");
+
+            const canvas = faceapi.createCanvasFromMedia(video);
+            webcamContainer.innerHTML = ""; // 기존 캔버스 초기화
+            webcamContainer.append(video); // 비디오 요소를 추가
+            webcamContainer.append(canvas); // 캔버스 요소 추가
+
+            const displaySize = {
+              width: video.videoWidth,
+              height: video.videoHeight,
+            };
+            faceapi.matchDimensions(canvas, displaySize);
+
+            setInterval(async () => {
+              const detections = await faceapi
+                .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+                .withFaceLandmarks()
+                .withFaceExpressions();
+
+              const resizedDetections = faceapi.resizeResults(
+                detections,
+                displaySize
+              );
+
+              const ctx = canvas.getContext("2d");
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+              faceapi.draw.drawDetections(canvas, resizedDetections);
+              faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+
+              const mappedExpressions = mapExpressionsToKorean(detections);
+              displayMappedExpressions(mappedExpressions);
+            }, 100); // 100ms마다 업데이트
+          });
+        })
+        .catch((err) => console.error("웹캠 활성화 실패:", err));
+    })
+    .catch((err) => console.error("모델 로드 실패:", err));
+}
+
+
+
+  video.addEventListener("play", () => {
+    const canvas = faceapi.createCanvasFromMedia(video);
+    webcamContainer.append(canvas);
+    const displaySize = { width: video.width, height: video.height };
+    faceapi.matchDimensions(canvas, displaySize);
+
+    setInterval(async () => {
+      const detections = await faceapi
+        .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+        .withFaceLandmarks()
+        .withFaceExpressions();
+      const resizedDetections = faceapi.resizeResults(detections, displaySize);
+      canvas.getContext("2d").clearRect(0, 0, video.width, video.height);
+      faceapi.draw.drawDetections(canvas, resizedDetections);
+      faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+
+      const mappedExpressions = mapExpressionsToKorean(detections);
+      displayMappedExpressions(mappedExpressions);
+    }, 100);
+  });
+
+
+// 감정 데이터 매핑 및 표시 함수는 그대로 유지
+function mapExpressionsToKorean(detections) {
+  const emotionMapping = {
+    neutral: "협조적인 태도",
+    happy: "억지웃음",
+    sad: "슬픔",
+    angry: "분노",
+    fearful: "???",
+    disgusted: "역겨운",
+    surprised: "놀람",
+  };
+  const mappedExpressions = {};
+  for (const detection of detections) {
+    const expressions = detection.expressions;
+    for (const [emotion, value] of Object.entries(expressions)) {
+      const koreanEmotion = emotionMapping[emotion] || emotion;
+      mappedExpressions[koreanEmotion] = value.toFixed(2);
+    }
+  }
+  return mappedExpressions;
+}
+
+function displayMappedExpressions(mappedExpressions) {
+  const emotionOutput = document.getElementById("emotion-output");
+  emotionOutput.innerHTML = "";
+  for (const [emotion, value] of Object.entries(mappedExpressions)) {
+    emotionOutput.innerHTML += `<p>${emotion}: ${value}</p>`;
+  }
+}
     </script>
   </body>
 </html>
