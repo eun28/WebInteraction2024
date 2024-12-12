@@ -69,16 +69,18 @@
         display: none !important;
       }
 
-  .p-text{position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 1.8rem; /* 텍스트 크기 조정 */
-  text-align: center;
-  font-family: "D2Coding", sans-serif;
-  display: none; /* 기본적으로 숨김 처리 */
-  z-index: 100; /* 텍스트가 위에 오도록 */}
+      .p-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 1.8rem; /* 텍스트 크기 조정 */
+        text-align: center;
+        font-family: "D2Coding", sans-serif;
+        display: none; /* 기본적으로 숨김 처리 */
+        z-index: 100; /* 텍스트가 위에 오도록 */
+      }
 
       @font-face {
         font-family: "Pretendard-Medium";
@@ -285,14 +287,41 @@
     <div class="webcam-container">
       <video id="webcam" width="720" height="560" autoplay muted></video>
     </div>
-<div id="emotion-output" style="position: absolute; bottom: 20px; right: 20px; background: #d8d8d8; padding: 0px 20px; font-family: Pretendard, sans-serif; border: 2px solid black; font-size: 1.5rem; z-index: 2;display: none; ">
-  <!-- 감정 데이터가 실시간으로 여기에 표시됩니다 -->
-</div>
+    <div
+      id="emotion-output"
+      style="
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: #d8d8d8;
+        padding: 0px 20px;
+        font-family: Pretendard, sans-serif;
+        border: 2px solid black;
+        font-size: 1.5rem;
+        z-index: 2;
+        display: none;
+      "
+    >
+      <!-- 감정 데이터가 실시간으로 여기에 표시됩니다 -->
+    </div>
 
-<div id="new-text" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 1.8rem; text-align: center; font-family: 'D2Coding', sans-serif; z-index: 101;">
-</div>
+    <div
+      id="new-text"
+      style="
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 1.8rem;
+        text-align: center;
+        font-family: 'D2Coding', sans-serif;
+        z-index: 101;
+      "
+    ></div>
 
-<script type="text/javascript">
+    <script type="text/javascript">
       const videoFiles = ["video1.mp4", "video2.mp4", "video3.mp4"];
 
       let currentVideoIndex = 0;
@@ -304,8 +333,8 @@
       const audio = new Audio("entity.mp3");
       audio.loop = true;
 
-let clickCount = 0; // 일반 클릭 횟수
-let clickStage = 0; // 클릭 상태를 관리하는 변수
+      let clickCount = 0; // 일반 클릭 횟수
+      let clickStage = 0; // 클릭 상태를 관리하는 변수
 
       // 동영상을 5초 간격으로 전환하는 함수
       function playNextVideo() {
@@ -401,29 +430,29 @@ let clickStage = 0; // 클릭 상태를 관리하는 변수
           };
 
           function mapExpressionsToKorean(detections) {
-  const mappedExpressions = {};
+            const mappedExpressions = {};
 
-  for (const detection of detections) {
-    const expressions = detection.expressions;
-    for (const [emotion, value] of Object.entries(expressions)) {
-      const koreanEmotion = emotionMapping[emotion] || emotion;
-      mappedExpressions[koreanEmotion] = value.toFixed(2);
-    }
-  }
+            for (const detection of detections) {
+              const expressions = detection.expressions;
+              for (const [emotion, value] of Object.entries(expressions)) {
+                const koreanEmotion = emotionMapping[emotion] || emotion;
+                mappedExpressions[koreanEmotion] = value.toFixed(2);
+              }
+            }
 
-  return mappedExpressions;
-}
+            return mappedExpressions;
+          }
 
-// 감정 결과를 화면에 표시하는 함수
-  function displayMappedExpressions(mappedExpressions) {
-    const outputElement = document.getElementById("emotion-output");
-    outputElement.innerHTML = ""; // 기존 데이터 초기화
+          // 감정 결과를 화면에 표시하는 함수
+          function displayMappedExpressions(mappedExpressions) {
+            const outputElement = document.getElementById("emotion-output");
+            outputElement.innerHTML = ""; // 기존 데이터 초기화
 
-    for (const [emotion, value] of Object.entries(mappedExpressions)) {
-      const emotionText = `<p>${emotion}: ${value}</p>`;
-      outputElement.innerHTML += emotionText; // 감정 데이터 추가
-    }
-  }
+            for (const [emotion, value] of Object.entries(mappedExpressions)) {
+              const emotionText = `<p>${emotion}: ${value}</p>`;
+              outputElement.innerHTML += emotionText; // 감정 데이터 추가
+            }
+          }
           setTimeout(() => {
             // 글 숨기기 완료 후 display: none 처리
             pText.style.display = "none";
@@ -448,338 +477,364 @@ let clickStage = 0; // 클릭 상태를 관리하는 변수
             webcamContainer.classList.add("visible");
 
             // 감정 데이터 출력 활성화
-      const emotionOutput = document.getElementById("emotion-output");
-      emotionOutput.style.display = "block"; // 감정 데이터를 표시
-
+            const emotionOutput = document.getElementById("emotion-output");
+            emotionOutput.style.display = "block"; // 감정 데이터를 표시
 
             // HAPPY 버튼 클릭 시 이미지 표시
-        document
-          .querySelector(".emotion-button:nth-child(1)") // HAPPY 버튼 선택
-          .addEventListener("click", () => {
-            const smileImage = document.querySelector(".custom-image-box img");
-            smileImage.src = "smile.png"; // HAPPY 이미지 경로
-            smileImage.classList.add("visible"); // 이미지를 표시
-          });
+            document
+              .querySelector(".emotion-button:nth-child(1)") // HAPPY 버튼 선택
+              .addEventListener("click", () => {
+                const smileImage = document.querySelector(
+                  ".custom-image-box img"
+                );
+                smileImage.src = "smile.png"; // HAPPY 이미지 경로
+                smileImage.classList.add("visible"); // 이미지를 표시
+              });
 
-        // ANGRY 버튼 클릭 시 이미지 표시
-        document
-          .querySelector(".emotion-button:nth-child(2)") // ANGRY 버튼 선택
-          .addEventListener("click", () => {
-            const angryImage = document.querySelector(".custom-image-box img");
-            angryImage.src = "angry.png"; // ANGRY 이미지 경로
-            angryImage.classList.add("visible"); // 이미지를 표시
-          });
+            // ANGRY 버튼 클릭 시 이미지 표시
+            document
+              .querySelector(".emotion-button:nth-child(2)") // ANGRY 버튼 선택
+              .addEventListener("click", () => {
+                const angryImage = document.querySelector(
+                  ".custom-image-box img"
+                );
+                angryImage.src = "angry.png"; // ANGRY 이미지 경로
+                angryImage.classList.add("visible"); // 이미지를 표시
+              });
 
-          // SAD 버튼 클릭 시 이미지 표시
-        document
-          .querySelector(".emotion-button:nth-child(3)") // SAD 버튼 선택
-          .addEventListener("click", () => {
-            const sadImage = document.querySelector(".custom-image-box img");
-            sadImage.src = "sad.png"; // SAD 이미지 경로
-            sadImage.classList.add("visible"); // 이미지를 표시
-          });
-          // Surprised 버튼 클릭 시 이미지 표시
-        document
-          .querySelector(".emotion-button:nth-child(4)") 
-          .addEventListener("click", () => {
-            const surprisedImage = document.querySelector(".custom-image-box img");
-            surprisedImage.src = "surprised.png";
-            surprisedImage.classList.add("visible"); // 이미지를 표시
-          });
-          // disgusting 버튼 클릭 시 이미지 표시
-        document
-          .querySelector(".emotion-button:nth-child(5)") 
-          .addEventListener("click", () => {
-            const disgustingImage = document.querySelector(".custom-image-box img");
-            disgustingImage.src = "disgusting.png";
-            disgustingImage.classList.add("visible"); // 이미지를 표시
-          });
+            // SAD 버튼 클릭 시 이미지 표시
+            document
+              .querySelector(".emotion-button:nth-child(3)") // SAD 버튼 선택
+              .addEventListener("click", () => {
+                const sadImage = document.querySelector(
+                  ".custom-image-box img"
+                );
+                sadImage.src = "sad.png"; // SAD 이미지 경로
+                sadImage.classList.add("visible"); // 이미지를 표시
+              });
+            // Surprised 버튼 클릭 시 이미지 표시
+            document
+              .querySelector(".emotion-button:nth-child(4)")
+              .addEventListener("click", () => {
+                const surprisedImage = document.querySelector(
+                  ".custom-image-box img"
+                );
+                surprisedImage.src = "surprised.png";
+                surprisedImage.classList.add("visible"); // 이미지를 표시
+              });
+            // disgusting 버튼 클릭 시 이미지 표시
+            document
+              .querySelector(".emotion-button:nth-child(5)")
+              .addEventListener("click", () => {
+                const disgustingImage = document.querySelector(
+                  ".custom-image-box img"
+                );
+                disgustingImage.src = "disgusting.png";
+                disgustingImage.classList.add("visible"); // 이미지를 표시
+              });
 
+            // 웹캠 활성화
+            const video = document.getElementById("webcam");
 
-        // 웹캠 활성화
-        const video = document.getElementById("webcam");
+            Promise.all([
+              faceapi.nets.tinyFaceDetector.loadFromUri("./models"),
+              faceapi.nets.faceLandmark68Net.loadFromUri("./models"),
+              faceapi.nets.faceRecognitionNet.loadFromUri("./models"),
+              faceapi.nets.faceExpressionNet.loadFromUri("./models"),
+            ]).then(startVideo);
 
-        Promise.all([
-          faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
-          faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
-          faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
-          faceapi.nets.faceExpressionNet.loadFromUri("/models"),
-        ]).then(startVideo);
+            function startVideo() {
+              navigator.getUserMedia(
+                { video: {} },
+                (stream) => (video.srcObject = stream),
+                (err) => console.error(err)
+              );
+            }
+            function adjustCanvasSize() {
+              const container = document.getElementById("webcamContainer");
 
-        function startVideo() {
-          navigator.getUserMedia(
-            { video: {} },
-            (stream) => (video.srcObject = stream),
-            (err) => console.error(err)
-          );
+              // container의 크기를 가져와 canvas 크기를 조정
+              const { webcamContainerWidth, webcamContainerHeight } =
+                container.getBoundingClientRect();
+              canvas.width = webcamContainerWidth;
+              canvas.height = webcamContainerHeight;
+            }
+
+            window.addEventListener("resize", adjustCanvasSize);
+            video.addEventListener("play", () => {
+              const canvas = faceapi.createCanvasFromMedia(video);
+              webcamContainer.append(canvas);
+              const displaySize = {
+                width: video.width,
+                height: video.height,
+              };
+              faceapi.matchDimensions(canvas, displaySize);
+              setInterval(async () => {
+                const detections = await faceapi
+                  .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+                  .withFaceLandmarks()
+                  .withFaceExpressions();
+
+                const resizedDetections = faceapi.resizeResults(
+                  detections,
+                  displaySize
+                );
+
+                canvas
+                  .getContext("2d")
+                  .clearRect(0, 0, video.width, video.height);
+                faceapi.draw.drawDetections(canvas, resizedDetections);
+                faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+
+                const mappedExpressions = mapExpressionsToKorean(detections);
+                displayMappedExpressions(mappedExpressions);
+              }, 100);
+            });
+          }, 1500);
         }
-        function adjustCanvasSize() {
-          const container = document.getElementById("webcamContainer");
-
-          // container의 크기를 가져와 canvas 크기를 조정
-          const { webcamContainerWidth, webcamContainerHeight } =
-            container.getBoundingClientRect();
-          canvas.width = webcamContainerWidth;
-          canvas.height = webcamContainerHeight;
-        }
-
-        window.addEventListener("resize", adjustCanvasSize);
-        video.addEventListener("play", () => {
-          const canvas = faceapi.createCanvasFromMedia(video);
-          webcamContainer.append(canvas);
-          const displaySize = {
-            width: video.width,
-            height: video.height,
-          };
-          faceapi.matchDimensions(canvas, displaySize);
-          setInterval(async () => {
-            const detections = await faceapi
-              .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
-              .withFaceLandmarks()
-              .withFaceExpressions();
-
-            const resizedDetections = faceapi.resizeResults(
-              detections,
-              displaySize
-            );
-
-            canvas
-              .getContext("2d")
-              .clearRect(0, 0, video.width, video.height);
-            faceapi.draw.drawDetections(canvas, resizedDetections);
-            faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
-          
-          const mappedExpressions = mapExpressionsToKorean(detections);
-          displayMappedExpressions(mappedExpressions);
-          }, 100);
-        });
-      }, 1500);
-    }
-     clickCount++;
+        clickCount++;
       });
 
-document.querySelector(".completed-button").addEventListener("click", () => {
-  const newText = document.getElementById("new-text");
-  const webcamContainer = document.querySelector(".webcam-container");
-  const video = document.getElementById("webcam");
+      document
+        .querySelector(".completed-button")
+        .addEventListener("click", () => {
+          const newText = document.getElementById("new-text");
+          const webcamContainer = document.querySelector(".webcam-container");
+          const video = document.getElementById("webcam");
 
-  // 기존 동작 (웹캠 스트림 종료 및 화면 요소 숨김 처리)
-  const stream = video.srcObject;
-  if (stream) {
-    const tracks = stream.getTracks();
-    tracks.forEach((track) => track.stop());
-    video.srcObject = null;
-  }
+          // 기존 동작 (웹캠 스트림 종료 및 화면 요소 숨김 처리)
+          // const stream = video.srcObject;
+          // if (stream) {
+          //   const tracks = stream.getTracks();
+          //   tracks.forEach((track) => track.stop());
+          //   video.srcObject = null;
+          // }
 
-  webcamContainer.classList.add("hidden");
-  videoPlayer.classList.add("hidden");
-  overlay.classList.add("hidden");
-  document.querySelector(".button-container").classList.add("hidden");
-  document.querySelector(".content-container").classList.add("hidden");
-  document.getElementById("emotion-output").style.display = "none";
-  document.body.style.backgroundColor = "black";
+          webcamContainer.classList.add("hidden");
+          videoPlayer.classList.add("hidden");
+          overlay.classList.add("hidden");
+          document.querySelector(".button-container").classList.add("hidden");
+          document.querySelector(".content-container").classList.add("hidden");
+          document.getElementById("emotion-output").style.display = "none";
+          document.body.style.backgroundColor = "black";
 
-  // 새로운 텍스트 설정
-  setTimeout(() => {
-    // 텍스트 초기화
-    newText.style.display = "none";
-    newText.style.opacity = "0";
-    newText.innerHTML = ""; // 기존 텍스트 초기화
+          // 새로운 텍스트 설정
+          setTimeout(() => {
+            // 텍스트 초기화
+            newText.style.display = "none";
+            newText.style.opacity = "0";
+            newText.innerHTML = ""; // 기존 텍스트 초기화
 
-     // 첫 번째 텍스트 표시
-    newText.innerHTML =
-      "감정 교육은 만족스러우셨나요?<br><font color='gray'>Was the emotional education satisfactory?</font>";
-    newText.style.display = "block";
-    newText.style.opacity = "1";
-    newText.style.transition = "opacity 1s ease";
+            // 첫 번째 텍스트 표시
+            newText.innerHTML =
+              "감정 교육은 만족스러우셨나요?<br><font color='gray'>Was the emotional education satisfactory?</font>";
+            newText.style.display = "block";
+            newText.style.opacity = "1";
+            newText.style.transition = "opacity 1s ease";
 
-    // 클릭 상태를 1로 설정
-    clickStage = 1;
-  });
-
-  // 화면 클릭 이벤트
-  document.addEventListener("click", () => {
-    if (clickStage === 1) {
-      // 두 번째 텍스트 설정
-      newText.style.opacity = "0"; // 기존 텍스트 서서히 사라짐
-      setTimeout(() => {
-        newText.innerHTML =
-          "5번의 감정 표현을 하신 당신의 수강료는 78134000원 입니다. 감사합니다.<br><font color='gray'>Your tuition fee for expressing your feelings 5 times is 78134000 won. Thank you.</font>";
-     // 버튼 추가
-        // 버튼 생성
-const restartButton = document.createElement("button");
-restartButton.innerText = "다시 수강하기";
-restartButton.style.position = "absolute";
-restartButton.style.top = "calc(50% + 150px)"; // newText 아래로 100px 떨어진 위치
-restartButton.style.left = "50%";
-restartButton.style.transform = "translateX(-50%)";
-restartButton.style.padding = "10px 20px";
-restartButton.style.fontSize = "1.5rem";
-restartButton.style.backgroundColor = "yellow";
-restartButton.style.border = "none";
-restartButton.style.color = "black";
-restartButton.style.cursor = "pointer";
-restartButton.style.fontFamily = "Pretendard, sans-serif";
-restartButton.style.zIndex = "10"; // 다른 요소 위로 배치
-
-// 버튼을 문서에 추가
-document.body.appendChild(restartButton);
-restartButton.addEventListener("click", () => {
-  // 초기화 작업
-  newText.style.display = "none";
-  restartButton.remove();
-
-  document.body.style.backgroundColor = "#D8D8D8";
-  webcamContainer.classList.remove("hidden");
-  webcamContainer.classList.add("visible");
-  document.querySelector(".button-container").classList.remove("hidden");
-  document.querySelector(".button-container").classList.add("visible");
-  document.querySelector(".content-container").classList.remove("hidden");
-  document.querySelector(".content-container").classList.add("visible");
-  document.getElementById("emotion-output").style.display = "block";
-
-  // 기존 스트림 및 캔버스 초기화
-  const video = document.getElementById("webcam");
-  const canvasContainer = webcamContainer.querySelector("canvas");
-  if (canvasContainer) canvasContainer.remove(); // 기존 캔버스 제거
-  if (video.srcObject) {
-    video.srcObject.getTracks().forEach((track) => track.stop()); // 기존 스트림 중지
-    video.srcObject = null;
-  }
-
-  // 웹캠 및 감정 추적 재활성화
-  startWebcamAndFaceDetection();
-});
-
-        newText.appendChild(restartButton); // 버튼 추가
-        newText.style.opacity = "1"; // 새 텍스트 서서히 나타남
-      }, 500); // 기존 텍스트 사라진 후 새 텍스트 설정
-
-      // 클릭 상태 초기화
-      clickStage = 0;
-    }
-  });
-});
-
-// 웹캠 및 감정 인식 활성화 함수
-function startWebcamAndFaceDetection() {
-  const video = document.getElementById("webcam");
-  const webcamContainer = document.querySelector(".webcam-container");
-
-  // 모델 로드
-  Promise.all([
-    faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
-    faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
-    faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
-    faceapi.nets.faceExpressionNet.loadFromUri("/models"),
-  ])
-    .then(() => {
-      console.log("모델 로드 성공");
-
-      // 웹캠 스트림 활성화
-      navigator.mediaDevices
-        .getUserMedia({ video: true })
-        .then((stream) => {
-          video.srcObject = stream;
-          video.play();
-
-          // Ensure the video element is visible and properly sized
-          video.style.display = "block";
-          video.style.objectFit = "cover"; // 화면 비율 유지
-
-          video.addEventListener("loadeddata", () => {
-            console.log("웹캠 데이터 로드 성공");
-
-            const canvas = faceapi.createCanvasFromMedia(video);
-            webcamContainer.innerHTML = ""; // 기존 캔버스 초기화
-            webcamContainer.append(video); // 비디오 요소를 추가
-            webcamContainer.append(canvas); // 캔버스 요소 추가
-
-            const displaySize = {
-              width: video.videoWidth,
-              height: video.videoHeight,
-            };
-            faceapi.matchDimensions(canvas, displaySize);
-
-            setInterval(async () => {
-              const detections = await faceapi
-                .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
-                .withFaceLandmarks()
-                .withFaceExpressions();
-
-              const resizedDetections = faceapi.resizeResults(
-                detections,
-                displaySize
-              );
-
-              const ctx = canvas.getContext("2d");
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-              faceapi.draw.drawDetections(canvas, resizedDetections);
-              faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
-
-              const mappedExpressions = mapExpressionsToKorean(detections);
-              displayMappedExpressions(mappedExpressions);
-            }, 100); // 100ms마다 업데이트
+            // 클릭 상태를 1로 설정
+            clickStage = 1;
           });
-        })
-        .catch((err) => console.error("웹캠 활성화 실패:", err));
-    })
-    .catch((err) => console.error("모델 로드 실패:", err));
-}
 
+          // 화면 클릭 이벤트
+          document.addEventListener("click", () => {
+            if (clickStage === 1) {
+              // 두 번째 텍스트 설정
+              newText.style.opacity = "0"; // 기존 텍스트 서서히 사라짐
+              setTimeout(() => {
+                newText.innerHTML =
+                  "5번의 감정 표현을 하신 당신의 수강료는 78134000원 입니다. 감사합니다.<br><font color='gray'>Your tuition fee for expressing your feelings 5 times is 78134000 won. Thank you.</font>";
+                // 버튼 추가
+                // 버튼 생성
+                const restartButton = document.createElement("button");
+                restartButton.innerText = "다시 수강하기";
+                restartButton.style.position = "absolute";
+                restartButton.style.top = "calc(50% + 150px)"; // newText 아래로 100px 떨어진 위치
+                restartButton.style.left = "50%";
+                restartButton.style.transform = "translateX(-50%)";
+                restartButton.style.padding = "10px 20px";
+                restartButton.style.fontSize = "1.5rem";
+                restartButton.style.backgroundColor = "yellow";
+                restartButton.style.border = "none";
+                restartButton.style.color = "black";
+                restartButton.style.cursor = "pointer";
+                restartButton.style.fontFamily = "Pretendard, sans-serif";
+                restartButton.style.zIndex = "10"; // 다른 요소 위로 배치
 
+                // 버튼을 문서에 추가
+                document.body.appendChild(restartButton);
+                restartButton.addEventListener("click", () => {
+                  // 초기화 작업
+                  newText.style.display = "none";
+                  restartButton.remove();
 
-  video.addEventListener("play", () => {
-    const canvas = faceapi.createCanvasFromMedia(video);
-    webcamContainer.append(canvas);
-    const displaySize = { width: video.width, height: video.height };
-    faceapi.matchDimensions(canvas, displaySize);
+                  document.body.style.backgroundColor = "#D8D8D8";
+                  webcamContainer.classList.remove("hidden");
+                  webcamContainer.classList.add("visible");
+                  document
+                    .querySelector(".button-container")
+                    .classList.remove("hidden");
+                  document
+                    .querySelector(".button-container")
+                    .classList.add("visible");
+                  document
+                    .querySelector(".content-container")
+                    .classList.remove("hidden");
+                  document
+                    .querySelector(".content-container")
+                    .classList.add("visible");
+                  document.getElementById("emotion-output").style.display =
+                    "block";
 
-    setInterval(async () => {
-      const detections = await faceapi
-        .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
-        .withFaceLandmarks()
-        .withFaceExpressions();
-      const resizedDetections = faceapi.resizeResults(detections, displaySize);
-      canvas.getContext("2d").clearRect(0, 0, video.width, video.height);
-      faceapi.draw.drawDetections(canvas, resizedDetections);
-      faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+                  // 기존 스트림 및 캔버스 초기화
+                  const video = document.getElementById("webcam");
+                  const canvasContainer =
+                    webcamContainer.querySelector("canvas");
+                  if (canvasContainer) canvasContainer.remove(); // 기존 캔버스 제거
+                  if (video.srcObject) {
+                    video.srcObject
+                      .getTracks()
+                      .forEach((track) => track.stop()); // 기존 스트림 중지
+                    video.srcObject = null;
+                  }
 
-      const mappedExpressions = mapExpressionsToKorean(detections);
-      displayMappedExpressions(mappedExpressions);
-    }, 100);
-  });
+                  // 웹캠 및 감정 추적 재활성화
+                  startWebcamAndFaceDetection();
+                });
 
+                newText.appendChild(restartButton); // 버튼 추가
+                newText.style.opacity = "1"; // 새 텍스트 서서히 나타남
+              }, 500); // 기존 텍스트 사라진 후 새 텍스트 설정
 
-function mapExpressionsToKorean(detections) {
-  const emotionMapping = {
-    neutral: "협조적인 태도",
-    happy: "억지웃음",
-    sad: "슬픔",
-    angry: "분노",
-    fearful: "???",
-    disgusted: "역겨운",
-    surprised: "놀람",
-  };
-  const mappedExpressions = {};
-  for (const detection of detections) {
-    const expressions = detection.expressions;
-    for (const [emotion, value] of Object.entries(expressions)) {
-      const koreanEmotion = emotionMapping[emotion] || emotion;
-      mappedExpressions[koreanEmotion] = value.toFixed(2);
-    }
-  }
-  return mappedExpressions;
-}
+              // 클릭 상태 초기화
+              clickStage = 0;
+            }
+          });
+        });
 
-function displayMappedExpressions(mappedExpressions) {
-  const emotionOutput = document.getElementById("emotion-output");
-  emotionOutput.innerHTML = "";
-  for (const [emotion, value] of Object.entries(mappedExpressions)) {
-    emotionOutput.innerHTML += `<p>${emotion}: ${value}</p>`;
-  }
-}
+      // 웹캠 및 감정 인식 활성화 함수
+      function startWebcamAndFaceDetection() {
+        const video = document.getElementById("webcam");
+        const webcamContainer = document.querySelector(".webcam-container");
+
+        // 모델 로드
+        Promise.all([
+          faceapi.nets.tinyFaceDetector.loadFromUri("./models"),
+          faceapi.nets.faceLandmark68Net.loadFromUri("./models"),
+          faceapi.nets.faceRecognitionNet.loadFromUri("./models"),
+          faceapi.nets.faceExpressionNet.loadFromUri("./models"),
+        ])
+          .then(() => {
+            console.log("모델 로드 성공");
+
+            // 웹캠 스트림 활성화
+            navigator.mediaDevices
+              .getUserMedia({ video: true })
+              .then((stream) => {
+                video.srcObject = stream;
+                video.play();
+
+                // Ensure the video element is visible and properly sized
+                video.style.display = "block";
+                video.style.objectFit = "cover"; // 화면 비율 유지
+
+                video.addEventListener("loadeddata", () => {
+                  console.log("웹캠 데이터 로드 성공");
+
+                  const canvas = faceapi.createCanvasFromMedia(video);
+                  webcamContainer.innerHTML = ""; // 기존 캔버스 초기화
+                  webcamContainer.append(video); // 비디오 요소를 추가
+                  webcamContainer.append(canvas); // 캔버스 요소 추가
+
+                  const displaySize = {
+                    width: video.videoWidth,
+                    height: video.videoHeight,
+                  };
+                  faceapi.matchDimensions(canvas, displaySize);
+
+                  setInterval(async () => {
+                    const detections = await faceapi
+                      .detectAllFaces(
+                        video,
+                        new faceapi.TinyFaceDetectorOptions()
+                      )
+                      .withFaceLandmarks()
+                      .withFaceExpressions();
+
+                    const resizedDetections = faceapi.resizeResults(
+                      detections,
+                      displaySize
+                    );
+
+                    const ctx = canvas.getContext("2d");
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    faceapi.draw.drawDetections(canvas, resizedDetections);
+                    faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+
+                    const mappedExpressions =
+                      mapExpressionsToKorean(detections);
+                    displayMappedExpressions(mappedExpressions);
+                  }, 100); // 100ms마다 업데이트
+                });
+              })
+              .catch((err) => console.error("웹캠 활성화 실패:", err));
+          })
+          .catch((err) => console.error("모델 로드 실패:", err));
+      }
+
+      video.addEventListener("play", () => {
+        const canvas = faceapi.createCanvasFromMedia(video);
+        webcamContainer.append(canvas);
+        const displaySize = { width: video.width, height: video.height };
+        faceapi.matchDimensions(canvas, displaySize);
+
+        setInterval(async () => {
+          const detections = await faceapi
+            .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+            .withFaceLandmarks()
+            .withFaceExpressions();
+          const resizedDetections = faceapi.resizeResults(
+            detections,
+            displaySize
+          );
+          canvas.getContext("2d").clearRect(0, 0, video.width, video.height);
+          faceapi.draw.drawDetections(canvas, resizedDetections);
+          faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+
+          const mappedExpressions = mapExpressionsToKorean(detections);
+          displayMappedExpressions(mappedExpressions);
+        }, 100);
+      });
+
+      function mapExpressionsToKorean(detections) {
+        const emotionMapping = {
+          neutral: "협조적인 태도",
+          happy: "억지웃음",
+          sad: "슬픔",
+          angry: "분노",
+          fearful: "???",
+          disgusted: "역겨운",
+          surprised: "놀람",
+        };
+        const mappedExpressions = {};
+        for (const detection of detections) {
+          const expressions = detection.expressions;
+          for (const [emotion, value] of Object.entries(expressions)) {
+            const koreanEmotion = emotionMapping[emotion] || emotion;
+            mappedExpressions[koreanEmotion] = value.toFixed(2);
+          }
+        }
+        return mappedExpressions;
+      }
+
+      function displayMappedExpressions(mappedExpressions) {
+        const emotionOutput = document.getElementById("emotion-output");
+        emotionOutput.innerHTML = "";
+        for (const [emotion, value] of Object.entries(mappedExpressions)) {
+          emotionOutput.innerHTML += `<p>${emotion}: ${value}</p>`;
+        }
+      }
     </script>
   </body>
 </html>
